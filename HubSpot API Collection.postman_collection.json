@@ -1,0 +1,775 @@
+{
+	"info": {
+		"_postman_id": "33b02a48-8abe-4194-9e49-5f978ac62149",
+		"name": "HubSpot API Collection",
+		"description": "Collection for HubSpot CRM operations including contacts, deals, products, and line items",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1747259"
+	},
+	"item": [
+		{
+			"name": "Contacts",
+			"item": [
+				{
+					"name": "Create Contact",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate random test data for contact",
+									"function generateRandomString(length) {",
+									"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';",
+									"    let result = '';",
+									"    for (let i = 0; i < length; i++) {",
+									"        result += chars.charAt(Math.floor(Math.random() * chars.length));",
+									"    }",
+									"    return result;",
+									"}",
+									"",
+									"// Generate random email",
+									"const randomEmail = `test.${generateRandomString(8)}@example.com`;",
+									"",
+									"// Set environment variables",
+									"pm.environment.set('contact_email', randomEmail);",
+									"pm.environment.set('contact_firstname', 'Test');",
+									"pm.environment.set('contact_lastname', generateRandomString(8));",
+									"pm.environment.set('contact_phone', '+1' + Math.floor(Math.random() * 9000000000 + 1000000000));",
+									"pm.environment.set('contact_company', 'Test Company ' + generateRandomString(4));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test successful creation",
+									"pm.test('Contact creation successful', function() {",
+									"    pm.response.to.have.status(201);",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // Store contact ID for future requests",
+									"    if (responseData && responseData.id) {",
+									"        pm.environment.set('contact_id', responseData.id);",
+									"        console.log('Created contact ID:', responseData.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"properties\": {\n        \"email\": \"{{contact_email}}\",\n        \"firstname\": \"{{contact_firstname}}\",\n        \"lastname\": \"{{contact_lastname}}\",\n        \"phone\": \"{{contact_phone}}\",\n        \"company\": \"{{contact_company}}\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/contacts",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"contacts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Contact retrieval successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/contacts/{{contact_id}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"contacts",
+								"{{contact_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deals",
+			"item": [
+				{
+					"name": "Create Deal",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate random deal data",
+									"const dealAmount = Math.floor(Math.random() * 50000 + 5000);",
+									"const dealStages = ['appointmentscheduled', 'qualifiedtobuy', 'presentationscheduled', 'decisionmakerboughtin', 'contractsent', 'closedwon'];",
+									"const randomStage = dealStages[Math.floor(Math.random() * dealStages.length)];",
+									"",
+									"// Set environment variables",
+									"pm.environment.set('deal_name', 'Deal for ' + pm.environment.get('contact_company'));",
+									"pm.environment.set('deal_amount', dealAmount.toString());",
+									"pm.environment.set('deal_stage', randomStage);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Deal creation successful', function() {",
+									"    pm.response.to.have.status(201);",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    // Store deal ID for future requests",
+									"    if (responseData && responseData.id) {",
+									"        pm.environment.set('deal_id', responseData.id);",
+									"        console.log('Created deal ID:', responseData.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"properties\": {\n        \"dealname\": \"{{deal_name}}\",\n        \"amount\": \"{{deal_amount}}\",\n        \"dealstage\": \"{{deal_stage}}\",\n        \"pipeline\": \"default\"\n    },\n    \"associations\": [\n        {\n            \"to\": {\n                \"id\": \"{{contact_id}}\"\n            },\n            \"types\": [\n                {\n                    \"associationCategory\": \"HUBSPOT_DEFINED\",\n                    \"associationTypeId\": 3\n                }\n            ]\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/deals",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"deals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Deal retrieval successful', function() {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/deals/{{deal_id}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"deals",
+								"{{deal_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Product data generator for Postman pre-request script",
+									"const adjectives = ['Premium', 'Deluxe', 'Classic', 'Modern', 'Elegant', 'Smart', 'Pro', 'Ultra'];",
+									"const products = ['Laptop', 'Phone', 'Watch', 'Camera', 'Headphones', 'Speaker', 'Tablet', 'Monitor'];",
+									"const descriptions = [",
+									"    'High-quality {} designed for professional use',",
+									"    'Advanced {} with cutting-edge features',",
+									"    'Next-generation {} for ultimate performance',",
+									"    'Innovative {} perfect for daily use'",
+									"];",
+									"",
+									"// Helper functions",
+									"function getRandomElement(array) {",
+									"    return array[Math.floor(Math.random() * array.length)];",
+									"}",
+									"",
+									"function generateRandomString(length = 8) {",
+									"    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';",
+									"    let result = '';",
+									"    for (let i = 0; i < length; i++) {",
+									"        result += chars.charAt(Math.floor(Math.random() * chars.length));",
+									"    }",
+									"    return result;",
+									"}",
+									"",
+									"function generateRandomPrice(min = 99.99, max = 999.99) {",
+									"    return (Math.random() * (max - min) + min).toFixed(2);",
+									"}",
+									"",
+									"// Generate product data",
+									"const productName = `${getRandomElement(adjectives)} ${getRandomElement(products)}`;",
+									"const description = getRandomElement(descriptions).replace('{}', productName);",
+									"const price = generateRandomPrice();",
+									"const sku = `SKU-${generateRandomString(8)}`;",
+									"",
+									"// Set environment variables",
+									"pm.environment.set('product_name', productName);",
+									"pm.environment.set('product_description', description);",
+									"pm.environment.set('product_price', price);",
+									"pm.environment.set('product_sku', sku);",
+									"",
+									"// Log generated data",
+									"console.log('Generated product data:', {",
+									"    name: productName,",
+									"    description: description,",
+									"    price: price,",
+									"    sku: sku",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"// Store product data for future requests",
+									"pm.environment.set(\"productId\", jsonData.id);",
+									"pm.environment.set(\"productDetails\", JSON.stringify(jsonData.properties));",
+									"",
+									"pm.test(\"Product created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.expect(jsonData.id).to.exist;",
+									"    pm.expect(jsonData.properties.name).to.equal(pm.environment.get('product_name'));",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"properties\": {\n        \"name\": \"{{product_name}}\",\n        \"description\": \"{{product_description}}\",\n        \"price\": \"{{product_price}}\",\n        \"hs_sku\": \"{{product_sku}}\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/products",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"products"
+							]
+						},
+						"description": "Creates a new product in HubSpot CRM"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"if (jsonData.results && jsonData.results.length > 0) {",
+									"    pm.environment.set(\"found_productId\", jsonData.results[0].id);",
+									"}",
+									"pm.test(\"Search completed successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filterGroups\": [\n        {\n            \"filters\": [\n                {\n                    \"propertyName\": \"name\",\n                    \"operator\": \"CONTAINS_TOKEN\",\n                    \"value\": \"{{search_product_name}}\"\n                }\n            ]\n        }\n    ],\n    \"properties\": [\"name\", \"description\", \"price\", \"hs_sku\"]\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/products/search",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"products",
+								"search"
+							]
+						},
+						"description": "Searches for products based on specified criteria"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Line Items",
+			"item": [
+				{
+					"name": "Create Line Item",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Line item data generator for Postman pre-request script",
+									"",
+									"// Helper function to generate random integer between min and max (inclusive)",
+									"function getRandomInt(min, max) {",
+									"    return Math.floor(Math.random() * (max - min + 1)) + min;",
+									"}",
+									"",
+									"// Try to get product details if they exist",
+									"let productDetails = null;",
+									"try {",
+									"    const storedDetails = pm.environment.get(\"productDetails\");",
+									"    if (storedDetails) {",
+									"        productDetails = JSON.parse(storedDetails);",
+									"    }",
+									"} catch (e) {",
+									"    console.log('No stored product details found or invalid format');",
+									"}",
+									"",
+									"// Generate line item data",
+									"const quantity = getRandomInt(1, 10);",
+									"const price = productDetails ? productDetails.price : getRandomInt(50, 500).toFixed(2);",
+									"const name = productDetails ? productDetails.name : pm.environment.get('product_name') || 'Default Product';",
+									"",
+									"// Set environment variables",
+									"pm.environment.set('line_item_quantity', quantity);",
+									"pm.environment.set('line_item_price', price);",
+									"pm.environment.set('line_item_name', name);",
+									"",
+									"// Calculate total amount",
+									"const totalAmount = (parseFloat(price) * quantity).toFixed(2);",
+									"pm.environment.set('line_item_total', totalAmount);",
+									"",
+									"// Log generated data",
+									"console.log('Generated line item data:', {",
+									"    name: name,",
+									"    quantity: quantity,",
+									"    price: price,",
+									"    total: totalAmount,",
+									"    productDetails: productDetails ? 'Using stored product details' : 'Using generated values'",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"// Store line item data for future requests",
+									"pm.environment.set(\"lineItemId\", jsonData.id);",
+									"pm.environment.set(\"lineItemDetails\", JSON.stringify(jsonData.properties));",
+									"",
+									"pm.test(\"Line Item created successfully\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.expect(jsonData.id).to.exist;",
+									"});",
+									"",
+									"// Automatically trigger associations if IDs exist",
+									"if (pm.environment.get(\"productId\")) {",
+									"    postman.setNextRequest(\"Associate Line Item to Product\");",
+									"} else if (pm.environment.get(\"dealId\")) {",
+									"    postman.setNextRequest(\"Associate Line Item to Deal\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"properties\": {\n        \"quantity\": \"{{line_item_quantity}}\",\n        \"price\": \"{{line_item_price}}\",\n        \"name\": \"{{line_item_name}}\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/line_items",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"line_items"
+							]
+						},
+						"description": "Creates a new line item"
+					},
+					"response": []
+				},
+				{
+					"name": "Associate Line Item to Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Association created successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"inputs\": [\n    {\n      \"properties\": {\n        \"hs_product_id\": \"{{productId}}\",\n        \"quantity\": \"{{quantity}}\",\n        \"price\": \"{{price}}\",\n        \"name\": \"{{productName}}\",\n        \"amount\": \"{{totalAmount}}\"\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/line_items/batch/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"line_items",
+								"batch",
+								"create"
+							]
+						},
+						"description": "Associates a line item with a product"
+					},
+					"response": []
+				},
+				{
+					"name": "Associate Line Item to Deal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Association created successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/line_items/{{lineItemId}}/associations/deals/{{dealId}}/line_item_to_deal",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"line_items",
+								"{{lineItemId}}",
+								"associations",
+								"deals",
+								"{{dealId}}",
+								"line_item_to_deal"
+							]
+						},
+						"description": "Associates a line item with a deal"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Search Users with Associated Deals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"if (jsonData.results && jsonData.results.length > 0) {",
+									"    pm.environment.set(\"found_userId\", jsonData.results[0].id);",
+									"}",
+									"pm.test(\"Search completed successfully\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"filterGroups\": [\n        {\n            \"filters\": [\n                {\n                    \"propertyName\": \"associations.deal\",\n                    \"operator\": \"HAS_PROPERTY\"\n                }\n            ]\n        }\n    ],\n    \"properties\": [\"firstname\", \"lastname\", \"email\"]\n}"
+						},
+						"url": {
+							"raw": "https://api.hubapi.com/crm/v3/objects/users/search",
+							"protocol": "https",
+							"host": [
+								"api",
+								"hubapi",
+								"com"
+							],
+							"path": [
+								"crm",
+								"v3",
+								"objects",
+								"users",
+								"search"
+							]
+						},
+						"description": "Searches for users who have associated deals"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"if (!pm.environment.get('access_token')) {",
+					"    console.log('Warning: access_token not set in environment');",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"pm.test(\"Response time is acceptable\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"pm.test(\"Status code is successful\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202, 204]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": "YOUR_ACCESS_TOKEN_HERE"
+		}
+	]
+}
