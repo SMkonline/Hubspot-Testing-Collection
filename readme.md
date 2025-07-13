@@ -116,6 +116,43 @@ This collection is designed to simplify testing HubSpot integrations. Feel free 
 
 ---
 
+## 🔐 Getting Your Access Token
+
+### Creating a Private App
+
+1. **Access Private Apps**:
+   - Log in to your HubSpot account
+   - Navigate to Settings (⚙️) > Integrations > Private Apps
+   - Click "Create private app"
+
+2. **Configure the App**:
+   - **Basic Info**:
+     - Name your app (e.g., "API Testing App")
+     - Add a description
+     - Upload an optional logo
+   
+   - **Required Scopes**:
+     - `crm.objects.contacts` - for Contacts API
+     - `crm.objects.deals` - for Deals API
+     - `crm.objects.products` - for Products API
+     - `crm.objects.line_items` - for Line Items API
+     - `crm.objects.owners` - for Users API
+
+3. **Get Your Token**:
+   - Click "Create app"
+   - Copy the generated access token immediately
+   - Format: `pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+
+### Security Best Practices
+
+- Never share or commit your access token
+- Store it securely in environment variables
+- Create separate apps for different environments
+- Regularly audit and remove unused apps
+- Token can be revoked and regenerated if compromised
+
+---
+
 ## 📄 License
 
 MIT License
