@@ -138,6 +138,30 @@ This collection is designed to simplify testing HubSpot integrations. Feel free 
      - `crm.objects.line_items` - for Line Items API
      - `crm.objects.owners` - for Users API
 
+   - **Webhook Configuration** (Optional):
+     - In the "Webhooks" tab of your private app:
+       1. Enable "Select specific subscription types"
+       2. Choose the events you want to monitor:
+          - `contact.creation` - When contacts are created
+          - `contact.propertyChange` - When contact properties change
+          - `deal.creation` - When deals are created
+          - `deal.propertyChange` - When deal properties change
+          - `product.creation` - When products are created
+          - `product.propertyChange` - When product properties change
+       3. Set your Target URL where webhooks will be sent
+       4. Configure webhook settings:
+          - Select authentication method (Basic Auth/Bearer Token)
+          - Set rate limiting preferences
+          - Choose retry settings for failed webhooks
+       5. Test your webhook endpoint using HubSpot's test feature
+
+     **Webhook Security Best Practices**:
+     - Use HTTPS for your webhook endpoint
+     - Implement webhook signature validation
+     - Set up proper authentication for your endpoint
+     - Monitor webhook delivery status in HubSpot
+     - Configure retry attempts for failed deliveries
+
 3. **Get Your Token**:
    - Click "Create app"
    - Copy the generated access token immediately
